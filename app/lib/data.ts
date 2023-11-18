@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { sql } from "@vercel/postgres";
 import {
   CustomerField,
   CustomersTable,
@@ -7,9 +7,9 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
-} from './definitions';
-import { formatCurrency } from './utils';
-import { unstable_noStore as noStore } from 'next/cache';
+} from "./definitions";
+import { formatCurrency } from "./utils";
+import { unstable_noStore as noStore } from "next/cache";
 
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
@@ -20,18 +20,18 @@ export async function fetchRevenue() {
     // Artificially delay a response for demo purposes.
     // Don't do this in real life :)
 
-    console.log('Fetching revenue data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // console.log('Fetching revenue data...');
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
     // console.log(data);
 
-    console.log('Data fetch complete after 3 seconds.');
+    console.log("Data fetch complete after 3 seconds.");
 
     return data.rows;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch revenue data.");
   }
 }
 
@@ -39,8 +39,8 @@ export async function fetchLatestInvoices() {
   noStore();
 
   try {
-    console.log('Fetching latest invoice data...');
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // console.log('Fetching latest invoice data...');
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -55,8 +55,8 @@ export async function fetchLatestInvoices() {
     }));
     return latestInvoices;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch the latest invoices.");
   }
 }
 
@@ -80,12 +80,12 @@ export async function fetchCardData() {
       invoiceStatusPromise,
     ]);
 
-    const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-    const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+    const numberOfInvoices = Number(data[0].rows[0].count ?? "0");
+    const numberOfCustomers = Number(data[1].rows[0].count ?? "0");
+    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? "0");
+    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? "0");
 
-    console.log(totalPaidInvoices)
+    console.log(totalPaidInvoices);
 
     return {
       numberOfCustomers,
@@ -94,15 +94,15 @@ export async function fetchCardData() {
       totalPendingInvoices,
     };
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to card data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to card data.");
   }
 }
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,
-  currentPage: number,
+  currentPage: number
 ) {
   noStore();
 
@@ -132,8 +132,8 @@ export async function fetchFilteredInvoices(
 
     return invoices.rows;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch invoices.");
   }
 }
 
@@ -155,8 +155,8 @@ export async function fetchInvoicesPages(query: string) {
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of invoices.");
   }
 }
 
@@ -179,11 +179,11 @@ export async function fetchInvoiceById(id: string) {
       // Convert amount from cents to dollars
       amount: invoice.amount / 100,
     }));
-    console.log(invoice)
+    console.log(invoice);
 
     return invoice[0];
   } catch (error) {
-    console.error('Database Error:', error);
+    console.error("Database Error:", error);
   }
 }
 
@@ -200,8 +200,8 @@ export async function fetchCustomers() {
     const customers = data.rows;
     return customers;
   } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch all customers.");
   }
 }
 
@@ -233,8 +233,8 @@ export async function fetchFilteredCustomers(query: string) {
 
     return customers;
   } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch customer table.');
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch customer table.");
   }
 }
 
@@ -243,7 +243,7 @@ export async function getUser(email: string) {
     const user = await sql`SELECT * from USERS where email=${email}`;
     return user.rows[0] as User;
   } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
+    console.error("Failed to fetch user:", error);
+    throw new Error("Failed to fetch user.");
   }
 }
